@@ -1,0 +1,30 @@
+#  Instalação Fluent-bit as a Service - Ambientes CentOS/RedHat
+
+- name: Atualização do Sistema Operacional
+  yum: name=* state=latest update_cache=yes
+
+- name: Adicionando YUM repository
+  copy: src=templates/fluent-bit.repo dest=/etc/yum.repos.d/fluent-bit.repo
+
+- name: Instalando Fluent-bit
+  yum: 
+    name: fluent-bit
+
+- name: Removendo Config Default
+  file:
+    path: /etc/fluent-bit/fluent-bit.conf
+    state: absent
+
+- name: Removendo Logs antigos
+  file:
+    path: /etc/fluent-bit/fluentbit.log
+    state: absent
+
+- name: Adicionando Config
+  template: src=templates/centos/fluent-bit.conf.j2 dest=/etc/fluent-bit/fluent-bit.conf
+
+- name: Iniciando Service
+  service:
+    name: fluent-bit
+    enabled: true
+  notify: Start Fluentbit services

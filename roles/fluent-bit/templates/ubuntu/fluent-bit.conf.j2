@@ -1,0 +1,55 @@
+#  This configuration is related to Debian/Ubuntu distributions
+[SERVICE]
+    flush        1
+    daemon       Off
+    Log_Level debug
+    parsers_file parsers.conf
+    http_server  Off
+    http_listen  0.0.0.0
+    http_port    2020
+    storage.path /var/log/flb-service-storage/
+    storage.backlog.mem_limit 20M
+
+#  AUTORIZATION AND AUTHENTICATION LOGS
+[INPUT]
+    Name        tail
+    Path        /var/log/auth.log
+    DB          /var/log/flb-service-storage/auth.db
+    storage.type filesystem
+    Tag         auth
+
+#  SYSTEM LOGS
+[INPUT]
+    Name        tail
+    Path        /var/log/syslog
+    DB          /var/log/flb-service-storage/syslog.db
+    storage.type filesystem
+    Tag         syslog
+
+#  KERNEL LOGS
+[INPUT]
+    Name        tail
+    Path        /var/log/kern.log
+    DB          /var/log/flb-service-storage/kernel.db
+    storage.type filesystem
+    Tag         kernel
+
+# SENDING LOGS TO OPENSEARCH 
+[OUTPUT]
+    Name  es
+    Match *
+    Host {{OPENSEARCH_HOSTNAME}}
+    Port 443
+    Include_Tag_Key On
+    Tag_Key _log-type
+    Logstash_Format On
+    Logstash_Prefix {{OPENSEARCH_INDEX}}
+    Type doc
+    HTTP_User {{ OPENSEARCH_USERNAME }}
+    HTTP_Passwd {{ OPENSEARCH_PASSWORD }}
+    tls On
+    tls.verify Off
+    Replace_Dots On
+    Trace_Error On
+    storage.total_limit_size 20M
+    Suppress_Type_Name On

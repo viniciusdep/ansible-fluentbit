@@ -1,0 +1,7 @@
+#  Restart fluentbit-service
+
+- name: Start Fluentbit service
+  service:
+    name: fluent-bit
+    state: restarted
+  become: true

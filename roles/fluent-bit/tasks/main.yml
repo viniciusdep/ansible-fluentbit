@@ -1,0 +1,13 @@
+---
+#  Instalação do Fluent-bit de acordo com o Sistema Operacional
+
+- name: Fluent-bit Install - Debian
+  include_tasks: install-debian.yml
+  ignore_errors: True
+  when: ansible_distribution == "Debian" or ansible_distribution == "Ubuntu"
+
+- name: Fluent-bit Install - CentOS  
+  include_tasks: install-centos.yml
+  ignore_errors: True
+  when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat"
+...

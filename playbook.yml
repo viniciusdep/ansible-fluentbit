@@ -1,0 +1,6 @@
+- name: Iniciando coleta de logs ...
+  hosts: all
+  become: yes
+  roles:
+    - fluent-bit
+    #- stop-fluent-bit

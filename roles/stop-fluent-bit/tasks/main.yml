@@ -1,0 +1,9 @@
+---
+#  Stopping Fluent-bit Service 
+
+- name: Stop service fluent-bit, if started
+  ansible.builtin.service:
+    name: fluent-bit
+    state: stopped
+
+...

@@ -1,0 +1,43 @@
+#  Instalação Fluent-bit as a Service - Ambientes Ubuntu/Debian
+
+- name: Atualização do Sistema Operacional
+  apt: name=* state=latest update_cache=yes
+
+- name: Adicionando GPG Key
+  apt_key:
+    url: https://packages.fluentbit.io/fluentbit.key
+    keyring: "/usr/share/keyrings/fluentbit-keyring.gpg"
+    state: present
+
+- name: Adicionando DEB repository
+  apt_repository:
+    repo: |
+      deb [signed-by=/usr/share/keyrings/fluentbit-keyring.gpg] https://packages.fluentbit.io/ubuntu/focal focal main
+    filename: fluentbit
+    state: present
+
+- name: Atualizando Source List
+  apt: name=* state=latest update_cache=yes
+
+- name: Instalando Fluent-bit
+  apt: 
+    name: fluent-bit
+
+- name: Removendo Config Default
+  file:
+    path: /etc/fluent-bit/fluent-bit.conf
+    state: absent
+
+- name: Removendo Logs antigos
+  file:
+    path: /etc/fluent-bit/fluentbit.log
+    state: absent
+
+- name: Adicionando Config  
+  copy: src=templates/ubuntu/loki.j2 dest=/etc/fluent-bit/fluent-bit.conf
+
+- name: Iniciando Service
+  service:
+    name: fluent-bit
+    enabled: true
+  notify: Start Fluentbit service
